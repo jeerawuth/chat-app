@@ -1,4 +1,4 @@
-import { auth, googleProvider } from "../database/database";
+import database, { auth, googleProvider } from "../database/database";
 import { actionType } from "../utils/share";
 import md5 from "md5";
 export const onGoogleLogin = () => {
@@ -17,8 +17,6 @@ export const onGoogleLogin = () => {
           code: err.code,
           message: err.message,
           type: "error",
-          description: err.message,
-          classType: "error",
         };
         dispatch({
           type: actionType.ERROR,
@@ -39,8 +37,6 @@ export const onLogout = () => {
           code: err.code,
           message: err.message,
           type: "error",
-          description: err.message,
-          classType: "error",
         };
         dispatch({
           type: actionType.ERROR,
@@ -65,8 +61,6 @@ export const onEmailLogin = (email, password) => {
           code: err.code,
           message: err.message,
           type: "error",
-          description: err.message,
-          classType: "error",
         };
         dispatch({
           type: actionType.ERROR,
@@ -84,27 +78,33 @@ export const onEmailSignUp = (email, password) => {
         const user = result.user;
         user
           .updateProfile({
-            displayName: "",
+            displayName: user.email.substring(0, email.lastIndexOf("@")),
             photoURL: `http://gravatar.com/avatar/${md5(
               user.email
             )}?d=identicon`,
           })
           .then(() => {
-            dispatch({
-              type: actionType.EMAIL_SIGNUP,
-              payload: user,
-            });
-            const successObj = {
-              code: "auth/email-signup-success",
-              message: "ลงทะเบียนเรียบร้อยแล้ว",
-              type: "success",
-              description: "ลงทะเบียนเรียบร้อยแล้ว",
-              classType: "success",
-            };
-            dispatch({
-              type: actionType.SUCCESS,
-              payload: successObj,
-            });
+            const usersRef = database.collection("users");
+            usersRef
+              .add({
+                name: user.displayName,
+                avatar: user.photoURL,
+              })
+              .then(() => {
+                dispatch({
+                  type: actionType.EMAIL_SIGNUP,
+                  payload: user,
+                });
+                const successObj = {
+                  code: "auth/email-signup-success",
+                  message: "ลงทะเบียนเรียบร้อยแล้ว",
+                  type: "success",
+                };
+                dispatch({
+                  type: actionType.SUCCESS,
+                  payload: successObj,
+                });
+              });
           });
       })
       .catch((err) => {
