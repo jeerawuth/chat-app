@@ -7,10 +7,18 @@ export const onGoogleLogin = () => {
       .signInWithPopup(googleProvider)
       .then((result) => {
         const user = result.user;
-        dispatch({
-          type: actionType.GOOGLE_LOGIN,
-          payload: user,
-        });
+        const usersRef = database.collection("users").doc(user.uid);
+        usersRef
+          .set({
+            name: user.displayName,
+            avatar: user.photoURL,
+          })
+          .then(() => {
+            dispatch({
+              type: actionType.GOOGLE_LOGIN,
+              payload: user,
+            });
+          });
       })
       .catch((err) => {
         const errObj = {
@@ -84,9 +92,9 @@ export const onEmailSignUp = (email, password) => {
             )}?d=identicon`,
           })
           .then(() => {
-            const usersRef = database.collection("users");
+            const usersRef = database.collection("users").doc(user.uid);
             usersRef
-              .add({
+              .set({
                 name: user.displayName,
                 avatar: user.photoURL,
               })
