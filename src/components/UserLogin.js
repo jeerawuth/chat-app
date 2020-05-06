@@ -16,16 +16,10 @@ const UserLogin = ({
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("");
-  // useEffect(() => {
-  //     if (storeLoading === false) {
-  //         setLoading(false)
-  //     }
-  // }, [storeLoading])
-  useEffect(() => {
-    onClearMessage();
-  }, [onClearMessage]);
+  //   useEffect(() => {
+  //     onClearMessage();
+  //   }, [onClearMessage]);
   useEffect(() => {
     if (storeMessage.message.length > 0) {
       const code = storeMessage.code;
@@ -37,8 +31,7 @@ const UserLogin = ({
     } else {
       setMessage("");
     }
-  }, [storeMessage, message]);
-
+  }, [storeMessage]);
   let messageTag = null; // prepare jsx for display message
   if (storeMessage.type === "error") {
     messageTag = (
@@ -52,7 +45,6 @@ const UserLogin = ({
   const emailLoginHandler = (e) => {
     e.preventDefault();
     onLoading(); // tell store to start loading
-    // setLoading(true); // set state when start loading
     onEmailLogin(email, password);
   };
   const cancelHandler = () => {

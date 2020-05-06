@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import * as action from "../actions/userAction";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { actionType, codeLists } from "../utils/share";
@@ -17,16 +17,7 @@ const UserSignup = ({
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("");
-  // useEffect(() => {
-  //     if (storeLoading === false) {
-  //         setLoading(false)
-  //     }
-  // }, [storeLoading])
-  useEffect(() => {
-    console.log(storeLoading);
-  });
   useEffect(() => {
     onClearMessage();
   }, [onClearMessage]);
@@ -71,14 +62,6 @@ const UserSignup = ({
   if (!data.loginStatus) {
     return (
       <div className="container">
-        {storeMessage.type === "success" ? (
-          <div className="col-6 mx-auto">
-            <div className="alert-secondary mb-1 mt-1 p-2 text-center">
-              {message}
-              <Link to="/login">เข้าสู่ระบบ</Link>
-            </div>
-          </div>
-        ) : null}
         <div className="modal-dialog row" role="document">
           <div className="modal-content col-12">
             <div className="card-header">
@@ -150,26 +133,30 @@ const UserSignup = ({
                 />
                 {messageTag}
                 <form>
-                  <div className="form-group">
-                    <label htmlFor="email">Email</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      name="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
+                  {storeMessage.type !== "success" ? (
+                    <div>
+                      <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
+                          type="email"
+                          className="form-control"
+                          name="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                          type="password"
+                          className="form-control"
+                          name="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                   {storeMessage.type !== "success" ? (
                     <div className="row card-footer flex-column-reverse flex-sm-row">
                       <div className="col-sm-6">
@@ -212,7 +199,7 @@ const UserSignup = ({
                           data-dismiss="modal"
                           onClick={() => gotoLoginHandler()}
                         >
-                          เข้าสู่ระบบ
+                          ไปหน้าเข้าสู่ระบบ
                         </button>
                       </div>
                     </div>

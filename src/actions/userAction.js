@@ -8,17 +8,29 @@ export const onGoogleLogin = () => {
       .then((result) => {
         const user = result.user;
         const usersRef = database.collection("users").doc(user.uid);
-        usersRef
-          .set({
-            name: user.displayName,
-            avatar: user.photoURL,
-          })
-          .then(() => {
+
+        usersRef.get().then((docSnapshot) => {
+          if (docSnapshot.exists) {
+            console.log("user exiting");
             dispatch({
               type: actionType.GOOGLE_LOGIN,
               payload: user,
             });
-          });
+          } else {
+            console.log("create new user");
+            usersRef
+              .set({
+                name: user.displayName,
+                avatar: user.photoURL,
+              })
+              .then(() => {
+                dispatch({
+                  type: actionType.GOOGLE_LOGIN,
+                  payload: user,
+                });
+              });
+          }
+        });
       })
       .catch((err) => {
         const errObj = {
@@ -82,7 +94,6 @@ export const onEmailSignUp = (email, password) => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        console.log(result);
         const user = result.user;
         user
           .updateProfile({

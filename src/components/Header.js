@@ -63,7 +63,12 @@ const Header = ({ data, onLogout }) => {
                     onClick={() => onLogout()}
                     to="/login"
                   >
-                    ออกจากระบบ
+                    <i
+                      className="fas fa-sign-out-alt primary"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="Sign Out"
+                    ></i>
                   </Link>
                 </li>
               ) : null}
