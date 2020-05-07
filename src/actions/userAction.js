@@ -106,8 +106,8 @@ export const onEmailSignUp = (email, password) => {
             const usersRef = database.collection("users").doc(user.uid);
             usersRef
               .set({
-                name: user.displayName,
-                avatar: user.photoURL,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
               })
               .then(() => {
                 dispatch({

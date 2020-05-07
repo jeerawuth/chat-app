@@ -11,7 +11,6 @@ const Home = ({ data }) => {
         <div className="row">
           <div className="col-sm-10 mx-auto text-center">
             <div className="display-4">Home Component</div>
-            <Rooms />
           </div>
         </div>
       </div>
@@ -27,6 +26,7 @@ const Home = ({ data }) => {
       <div className="row">
         <div className="col-sm-10 mx-auto text-center">
           <div className="text-success p-3">You Login Already!!</div>
+          <Rooms />
         </div>
       </div>
     </div>

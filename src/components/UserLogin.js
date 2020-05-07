@@ -17,9 +17,6 @@ const UserLogin = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  //   useEffect(() => {
-  //     onClearMessage();
-  //   }, [onClearMessage]);
   useEffect(() => {
     if (storeMessage.message.length > 0) {
       const code = storeMessage.code;
@@ -141,7 +138,7 @@ const UserLogin = ({
                   }}
                 />
                 {messageTag}
-                <form>
+                <form autoComplete="off">
                   <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input
@@ -154,6 +151,7 @@ const UserLogin = ({
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      onFocus={onClearMessage}
                     />
                   </div>
                   <div className="form-group">
@@ -168,6 +166,7 @@ const UserLogin = ({
                       name="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      onFocus={onClearMessage}
                     />
                   </div>
                   <div className="row card-footer flex-column-reverse flex-sm-row">

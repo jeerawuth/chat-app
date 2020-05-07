@@ -79,7 +79,7 @@ const Header = ({ data, onLogout }) => {
                     src={pic}
                     alt="user"
                     width="40"
-                    className="img-fluid ml-1"
+                    className="img-fluid ml-1 rounded-circle"
                   />
                 </div>
               ) : null}

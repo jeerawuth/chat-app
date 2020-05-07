@@ -52,10 +52,6 @@ const UserSignup = ({
       error: { status: true, message: "" },
     },
   });
-  console.log("test component did load");
-  useEffect(() => {
-    onClearMessage();
-  }, [onClearMessage]);
   useEffect(() => {
     if (storeMessage.message.length > 0) {
       const code = storeMessage.code;
@@ -157,7 +153,6 @@ const UserSignup = ({
       formData[name] = formElements[name].value;
     }
   };
-
   const cancelHandler = () => {
     setEmail("");
     setPassword("");
@@ -241,7 +236,7 @@ const UserSignup = ({
                   }}
                 />
                 {messageTag}
-                <form onSubmit={onFormSubmit}>
+                <form onSubmit={onFormSubmit} autoComplete="off">
                   {storeMessage.type !== "success" ? (
                     <div>
                       <div className="form-group">
