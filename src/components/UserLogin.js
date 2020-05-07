@@ -43,9 +43,17 @@ const UserLogin = ({
     );
   }
   const emailLoginHandler = (e) => {
-    e.preventDefault();
-    onLoading(); // tell store to start loading
-    onEmailLogin(email, password);
+    if (checkValidator()) {
+      e.preventDefault();
+      onLoading(); // tell store to start loading
+      onEmailLogin(email, password);
+    }
+  };
+  const checkValidator = () => {
+    if (email !== "" && password !== "") {
+      return true;
+    }
+    return false;
   };
   const cancelHandler = () => {
     setEmail(""); // clear form
@@ -138,7 +146,11 @@ const UserLogin = ({
                     <label htmlFor="email">Email</label>
                     <input
                       type="email"
-                      className="form-control"
+                      className={
+                        storeMessage.code.indexOf("email") !== -1
+                          ? "form-control is-invalid"
+                          : "form-control"
+                      }
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -148,7 +160,11 @@ const UserLogin = ({
                     <label htmlFor="password">Password</label>
                     <input
                       type="password"
-                      className="form-control"
+                      className={
+                        storeMessage.code.indexOf("password") !== -1
+                          ? "form-control is-invalid"
+                          : "form-control"
+                      }
                       name="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -171,6 +187,7 @@ const UserLogin = ({
                         className="btn btn-primary mt-1"
                         style={{ width: "100%" }}
                         onClick={emailLoginHandler}
+                        disabled={!checkValidator()}
                       >
                         เข้าสู่ระบบ
                       </button>

@@ -18,41 +18,8 @@ const UserSignup = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordValidator, setPasswordValidator] = useState(false);
   const [message, setMessage] = useState("");
-  const [formValid, setFormValid] = useState(false);
-  const [formElements, setFormElements] = useState({
-    email: {
-      type: "email",
-      value: "",
-      validator: {
-        required: true,
-        pattern: "email",
-      },
-      touched: false,
-      error: { status: true, message: "" },
-    },
-    password: {
-      type: "password",
-      value: "",
-      validator: {
-        required: true,
-        minLength: 6,
-      },
-      touched: false,
-      error: { status: true, message: "" },
-    },
-    confirmPassword: {
-      type: "confirmPassword",
-      value: "",
-      validator: {
-        required: true,
-        minLength: 6,
-      },
-      touched: false,
-      error: { status: true, message: "" },
-    },
-  });
-  console.log("test component did load");
   useEffect(() => {
     onClearMessage();
   }, [onClearMessage]);
@@ -80,82 +47,29 @@ const UserSignup = ({
     );
   }
   const emailLoginHandler = (e) => {
-    if (checkValidator() && checkConfirmPassword()) {
+    if (checkValidator()) {
       e.preventDefault();
       onLoading(); // tell store to start loading
       onEmailSignup(email, password);
     }
   };
-
-  const onFormChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    let updatedForm = { ...formElements };
-    updatedForm[name].value = value;
-    updatedForm[name].touched = true;
-    const validatorObject = checkValidator(value, updatedForm[name].validator);
-    updatedForm[name].error = {
-      status: validatorObject.status,
-      message: validatorObject.message,
-    };
-    let formStatus = true;
-    for (let name in updatedForm) {
-      if (updatedForm[name].validator.required === true) {
-        formStatus = !updatedForm[name].error.status && formStatus;
-      }
-    }
-    setFormElements(updatedForm);
-    setFormValid(formStatus);
-  };
-  const checkConfirmPassword = () => {
-    if (password === confirmPassword) {
+  const checkValidator = () => {
+    if (
+      passwordValidator === false &&
+      email !== "" &&
+      password !== "" &&
+      confirmPassword !== "" &&
+      checkEmail(email)
+    ) {
       return true;
     }
     return false;
   };
-
-  const checkValidator = (value = "", rule = {}) => {
-    let valid = true;
-    let message = "";
-    if (value.trim().length === 0 && rule.required) {
-      valid = false;
-      message = "จำเป็นต้องกรอก";
+  const checkEmail = (emailText) => {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailText) === true) {
+      return true;
     }
-    if (value.length < rule.minLength && valid) {
-      valid = false;
-      message = `น้อยกว่า ${rule.minLength} ตัวอักษร`;
-    }
-    if (value.length > rule.maxLength && valid) {
-      valid = false;
-      message = `มากกว่า ${rule.maxLength} ตัวอักษร`;
-    }
-    if (rule.pattern === "email" && valid) {
-      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) === false) {
-        valid = false;
-        message = "กรอกอีเมล์ไม่ถูกต้อง";
-      }
-    }
-    return { status: !valid, message: message };
-  };
-  const getInputClass = (name) => {
-    const elementErrorStatus = formElements[name].error.status;
-    if (!formElements[name].touched) {
-      return ["form-control"];
-    } else {
-      return elementErrorStatus && formElements[name].touched
-        ? "form-control is-invalid"
-        : "form-control";
-    }
-  };
-  const getErrorMessage = (name) => {
-    return formElements[name].error.message;
-  };
-  const onFormSubmit = (e) => {
-    e.preventDefault();
-    const formData = {};
-    for (let name in formElements) {
-      formData[name] = formElements[name].value;
-    }
+    return false;
   };
 
   const cancelHandler = () => {
@@ -167,7 +81,13 @@ const UserSignup = ({
     onClearMessage();
     history.push("/login");
   };
-
+  const confirmPasswordHandler = (e) => {
+    if (confirmPassword !== password && confirmPassword !== "") {
+      setPasswordValidator(true);
+    } else {
+      setPasswordValidator(false);
+    }
+  };
   if (!data.loginStatus) {
     return (
       <div className="container">
@@ -241,7 +161,7 @@ const UserSignup = ({
                   }}
                 />
                 {messageTag}
-                <form onSubmit={onFormSubmit}>
+                <form>
                   {storeMessage.type !== "success" ? (
                     <div>
                       <div className="form-group">
@@ -249,18 +169,18 @@ const UserSignup = ({
                         <input
                           type="email"
                           className={
-                            storeMessage.code.indexOf("email") !== -1
+                            storeMessage.code.indexOf("email") !== -1 ||
+                            !checkEmail(email)
                               ? "form-control is-invalid"
-                              : getInputClass("email")
+                              : "form-control"
                           }
                           name="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          onKeyUp={onFormChange}
                           onFocus={onClearMessage}
                         />
                         <div className="invalid-feedback">
-                          {getErrorMessage("email")}
+                          กรุณาตรวจสอบอีเมล
                         </div>
                       </div>
 
@@ -269,46 +189,39 @@ const UserSignup = ({
                         <input
                           type="password"
                           className={
-                            !checkConfirmPassword() ||
                             storeMessage.code.indexOf("password") !== -1
                               ? "form-control is-invalid"
-                              : getInputClass("password")
+                              : "form-control"
                           }
                           name="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          onKeyUp={onFormChange}
+                          onKeyUp={confirmPasswordHandler}
                           onFocus={onClearMessage}
                         />
                         <div className="invalid-feedback">
-                          {!checkConfirmPassword()
-                            ? "รหัสผ่านไม่ตรงกัน"
-                            : getErrorMessage("confirmPassword")}
+                          กรุณาตรวจสอบรหัสผ่าน
                         </div>
                       </div>
                       <div className="form-group">
-                        <label htmlFor="confirmPassword">
-                          Confirm password
-                        </label>
+                        <label htmlFor="password">Confirm password</label>
                         <input
                           type="password"
                           className={
-                            !checkConfirmPassword() ||
-                            storeMessage.code.indexOf("password") !== -1
+                            passwordValidator
                               ? "form-control is-invalid"
-                              : getInputClass("confirmPassword")
+                              : "form-control"
                           }
                           name="confirmPassword"
                           value={confirmPassword}
                           onChange={(e) => {
                             setConfirmPassword(e.target.value);
                           }}
-                          onKeyUp={onFormChange}
+                          onKeyDown={() => setPasswordValidator(true)}
+                          onKeyUp={confirmPasswordHandler}
                         />
                         <div className="invalid-feedback">
-                          {!checkConfirmPassword()
-                            ? "รหัสผ่านไม่ตรงกัน"
-                            : getErrorMessage("confirmPassword")}
+                          รหัสผ่านไม่ตรงกัน
                         </div>
                       </div>
                     </div>
@@ -331,11 +244,7 @@ const UserSignup = ({
                           className="btn btn-primary mt-1"
                           style={{ width: "100%" }}
                           onClick={emailLoginHandler}
-                          disabled={
-                            !formValid ||
-                            storeMessage.type === "error" ||
-                            !checkConfirmPassword()
-                          }
+                          disabled={!checkValidator()}
                         >
                           ลงทะเบียน
                         </button>
