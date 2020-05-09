@@ -1,63 +1,55 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
-import database from "../database/database";
-const Rooms = ({ id, data }) => {
-  const [editLoading, setEditLoading] = useState(false);
-  const [roomName, setRoomName] = useState("");
-  const [details, setDetails] = useState("");
-
-  useEffect(() => {
-    setEditLoading(true);
-    const roomsRef = database.collection("rooms").doc(id);
-    roomsRef
-      .get()
-      .then((result) => {
-        setRoomName(result.roomName);
-        setDetails(result.details);
-        setEditLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [id]);
-
-  const editRoom = (id) => {
-    const ref = database.collection("rooms").doc(id);
-    const user = {
-      id: data.user.uid,
-      displayName: data.user.displayName,
-      photoURL: data.user.photoURL,
-    };
-    ref
-      .set({
-        name: roomName,
-        details: details,
-        createdBy: {
-          uid: user.id,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-        },
-      })
-      .then(() => {
-        console.log("edit ok");
-      });
+const Rooms = ({ data, editRoomById, getRoomById, id }) => {
+  const [editName, setEditName] = useState("");
+  const [editDetails, setEditDetails] = useState("");
+  const [editLoding, setEditLoading] = useState(false);
+  const onEditHandler = () => {
+    editRoomById(id, editName, editDetails);
+    onClearHandler();
   };
-
+  const onClearHandler = () => {
+    setEditName("");
+    setEditDetails("");
+  };
   return (
-    <div className="container">
-      {editLoading ? (
-        <div className="spinner-border text-info" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      ) : (
-        <div className="container">
-          <div
-            className="btn btn-sm btn-info"
-            data-toggle="modal"
-            data-target="#editModal"
-          >
-            <i className="fas fa-edit"></i>
-          </div>
+    <div>
+      <div
+        className="btn btn-sm btn-info"
+        data-toggle="modal"
+        data-target={`#editModal${id}`}
+        onClick={() => {
+          setEditLoading(true);
+          getRoomById(id).then((result) => {
+            console.log(result);
+            setEditName(result.data().name);
+            setEditDetails(result.data().details);
+            setEditLoading(false);
+          });
+        }}
+      >
+        <i className="fas fa-edit"></i>
+      </div>
+      <div
+        className="modal fade"
+        id={`editModal${id}`}
+        tabIndex="-2"
+        role="dialog"
+        aria-labelledby="addRoomLabel"
+        aria-hidden="true"
+      >
+        {editLoding ? (
+          <i
+            className="fas fa-spinner fa-pulse fa-3x"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              opacity: "1",
+            }}
+          ></i>
+        ) : (
           <div
             className="modal-dialog"
             role="document"
@@ -65,8 +57,8 @@ const Rooms = ({ id, data }) => {
           >
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="editRoomLabel">
-                  แก้ไขห้องแชต
+                <h5 className="modal-title" id="addRoomLabel">
+                  แก้ไขห้อง
                 </h5>
                 <button
                   type="button"
@@ -85,8 +77,8 @@ const Rooms = ({ id, data }) => {
                       type="text"
                       className="form-control"
                       placeholder="กรอกชื่อห้อง"
-                      value={roomName}
-                      onChange={(e) => setRoomName(e.target.value)}
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
                     />
                   </div>
                   <div className="form-group">
@@ -94,8 +86,8 @@ const Rooms = ({ id, data }) => {
                     <textarea
                       className="form-control"
                       rows="3"
-                      value={details}
-                      onChange={(e) => setDetails(e.target.value)}
+                      value={editDetails}
+                      onChange={(e) => setEditDetails(e.target.value)}
                     ></textarea>
                   </div>
                 </form>
@@ -105,6 +97,7 @@ const Rooms = ({ id, data }) => {
                   type="button"
                   className="btn btn-secondary btn-sm"
                   data-dismiss="modal"
+                  onClick={onClearHandler}
                 >
                   ปิด
                 </button>
@@ -112,15 +105,15 @@ const Rooms = ({ id, data }) => {
                   type="button"
                   className="btn btn-primary btn-sm"
                   data-dismiss="modal"
-                  onClick={() => editRoom(id)}
+                  onClick={onEditHandler}
                 >
-                  อัพเดตห้อง
+                  แก้ไขห้อง
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

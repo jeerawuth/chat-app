@@ -1,18 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import database from "../database/database";
+import EditRoom from "./EditRoom";
 const Rooms = ({ data }) => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const currentRoomName = useRef("");
   const [details, setDetails] = useState("");
-  const currentDetails = useRef("");
 
   useEffect(() => {
     setLoading(true);
-    const roomsRef = database.collection("rooms");
-    roomsRef.onSnapshot(
+    const ref = database.collection("rooms");
+    ref.onSnapshot(
       (snapshot) => {
         let tempDataArray = [];
         snapshot.forEach((doc) => {
@@ -33,9 +32,6 @@ const Rooms = ({ data }) => {
         console.log(err);
       }
     );
-    // return () => {
-    //   roomsRef();
-    // };
   }, [setLoading]);
 
   const addRoom = (event) => {
@@ -57,7 +53,9 @@ const Rooms = ({ data }) => {
         },
       })
       .then(() => {
-        console.log("ok");
+        setRoomName("");
+        setDetails("");
+        console.log("add ok");
       });
   };
   const deleteRoomHandler = (id) => {
@@ -75,33 +73,28 @@ const Rooms = ({ data }) => {
 
   const getRoomById = (id) => {
     const roomsRef = database.collection("rooms").doc(id);
-
-    roomsRef
-      .get()
-      .then((result) => {
-        currentRoomName.current.value = result.data().name;
-        currentDetails.current.innerHTML = result.data().details;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    console.log(id);
+    return roomsRef.get();
+    // .then((result) => {
+    //   setRoomName(result.data().name);
+    //   setDetails(result.data().details);
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   };
 
-  const editRoomById = (id) => {
+  const editRoomById = (id, editName, editDetail) => {
+    console.log("edit" + id);
     const ref = database.collection("rooms").doc(id);
-    const user = {
-      id: data.user.uid,
-      displayName: data.user.displayName,
-      photoURL: data.user.photoURL,
-    };
     ref
       .set({
-        name: roomName,
-        details: details,
+        name: editName,
+        details: editDetail,
         createdBy: {
-          uid: user.id,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
+          uid: data.user.uid,
+          displayName: data.user.displayName,
+          photoURL: data.user.photoURL,
         },
       })
       .then(() => {
@@ -144,20 +137,25 @@ const Rooms = ({ data }) => {
                           className="btn btn-link collapsed"
                           type="button"
                           data-toggle="collapse"
-                          data-target={"#" + item.id.toString()}
+                          data-target={`#list${item.id}`}
                           aria-expanded="false"
                           aria-controls="collapseTwo"
                         >
                           <div>{item.name} </div>
                         </div>
-                        <div
+                        {/* <div
                           className="btn btn-sm btn-info"
                           data-toggle="modal"
                           data-target="#editModal"
                           onClick={() => getRoomById(item.id)}
                         >
                           <i className="fas fa-edit"></i>
-                        </div>
+                        </div> */}
+                        <EditRoom
+                          editRoomById={editRoomById}
+                          getRoomById={() => getRoomById(item.id)}
+                          id={item.id}
+                        />
                         <div
                           className="btn btn-sm btn-danger"
                           data-toggle="modal"
@@ -168,7 +166,7 @@ const Rooms = ({ data }) => {
                       </div>
                     </div>
                     <div
-                      id={item.id.toString()}
+                      id={`list${item.id}`}
                       className="collapse"
                       aria-labelledby="headingTwo"
                       data-parent="#roomLists"
@@ -230,79 +228,6 @@ const Rooms = ({ data }) => {
                         </div>
                       </div>
                     </div>
-
-                    <div
-                      className="modal fade"
-                      id="editModal"
-                      tabIndex="-1"
-                      role="dialog"
-                      aria-labelledby="editRoomLabel"
-                      aria-hidden="true"
-                    >
-                      <div
-                        className="modal-dialog"
-                        role="document"
-                        style={{ maxWidth: 300 }}
-                      >
-                        <div className="modal-content">
-                          <div className="modal-header">
-                            <h5 className="modal-title" id="editRoomLabel">
-                              แก้ไขห้องแชต
-                            </h5>
-                            <button
-                              type="button"
-                              className="close"
-                              data-dismiss="modal"
-                              aria-label="Close"
-                            >
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div className="modal-body p-3">
-                            <form>
-                              <div className="form-group">
-                                <label>ชื่อห้อง</label>
-                                <input
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="กรอกชื่อห้อง"
-                                  ref={currentRoomName}
-                                  // value={currentRoomName.current}
-                                  defaultValue={currentRoomName.current}
-                                />
-                              </div>
-                              <div className="form-group">
-                                <label>รายละเอียดของห้อง</label>
-                                <textarea
-                                  className="form-control"
-                                  rows="3"
-                                  ref={currentDetails}
-                                  // value={currentDetails.current}
-                                  defaultValue={currentDetails.current}
-                                ></textarea>
-                              </div>
-                            </form>
-                          </div>
-                          <div className="modal-footer">
-                            <button
-                              type="button"
-                              className="btn btn-secondary btn-sm"
-                              data-dismiss="modal"
-                            >
-                              ปิด
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-sm"
-                              data-dismiss="modal"
-                              onClick={() => editRoomById(item.id)}
-                            >
-                              แก้ไขห้อง
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 );
               })}
@@ -316,13 +241,13 @@ const Rooms = ({ data }) => {
         id="addModal"
         tabIndex="-1"
         role="dialog"
-        aria-labelledby="editRoomLabel"
+        aria-labelledby="addRoomLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog" role="document" style={{ maxWidth: 300 }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="editRoomLabel">
+              <h5 className="modal-title" id="addRoomLabel">
                 เพิ่มห้องแชต
               </h5>
               <button
