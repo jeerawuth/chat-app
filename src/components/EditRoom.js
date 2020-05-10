@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-const Rooms = ({ data, editRoomById, getRoomById, id }) => {
+const EditRoom = ({ editRoomById, getRoomById, id }) => {
   const [editName, setEditName] = useState("");
   const [editDetails, setEditDetails] = useState("");
-  const [editLoding, setEditLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   const onEditHandler = () => {
-    editRoomById(id, editName, editDetails);
-    onClearHandler();
+    editRoomById(id, editName, editDetails).then(() => {
+      console.log("edit ok");
+    });
   };
-  const onClearHandler = () => {
-    setEditName("");
-    setEditDetails("");
+  const formDisabled = () => {
+    if (editName === "" || editDetails === "") {
+      return true;
+    }
   };
   return (
-    <div>
+    <div className="container">
       <div
         className="btn btn-sm btn-info"
         data-toggle="modal"
@@ -21,7 +23,6 @@ const Rooms = ({ data, editRoomById, getRoomById, id }) => {
         onClick={() => {
           setEditLoading(true);
           getRoomById(id).then((result) => {
-            console.log(result);
             setEditName(result.data().name);
             setEditDetails(result.data().details);
             setEditLoading(false);
@@ -38,7 +39,7 @@ const Rooms = ({ data, editRoomById, getRoomById, id }) => {
         aria-labelledby="addRoomLabel"
         aria-hidden="true"
       >
-        {editLoding ? (
+        {editLoading ? (
           <i
             className="fas fa-spinner fa-pulse fa-3x"
             style={{
@@ -75,20 +76,32 @@ const Rooms = ({ data, editRoomById, getRoomById, id }) => {
                     <label>ชื่อห้อง</label>
                     <input
                       type="text"
-                      className="form-control"
+                      className={
+                        editName !== ""
+                          ? "form-control"
+                          : "form-control is-invalid"
+                      }
                       placeholder="กรอกชื่อห้อง"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                     />
+                    <div className="invalid-feedback">กรุณากรอกชื่อห้อง</div>
                   </div>
                   <div className="form-group">
                     <label>รายละเอียดของห้อง</label>
                     <textarea
-                      className="form-control"
+                      className={
+                        editDetails !== ""
+                          ? "form-control"
+                          : "form-control is-invalid"
+                      }
                       rows="3"
                       value={editDetails}
                       onChange={(e) => setEditDetails(e.target.value)}
                     ></textarea>
+                    <div className="invalid-feedback">
+                      กรุณากรอกรายละเอียดห้อง
+                    </div>
                   </div>
                 </form>
               </div>
@@ -97,7 +110,6 @@ const Rooms = ({ data, editRoomById, getRoomById, id }) => {
                   type="button"
                   className="btn btn-secondary btn-sm"
                   data-dismiss="modal"
-                  onClick={onClearHandler}
                 >
                   ปิด
                 </button>
@@ -106,6 +118,7 @@ const Rooms = ({ data, editRoomById, getRoomById, id }) => {
                   className="btn btn-primary btn-sm"
                   data-dismiss="modal"
                   onClick={onEditHandler}
+                  disabled={formDisabled()}
                 >
                   แก้ไขห้อง
                 </button>
@@ -122,4 +135,4 @@ const mapStateToProps = (state) => {
     data: state.data,
   };
 };
-export default connect(mapStateToProps)(Rooms);
+export default connect(mapStateToProps)(EditRoom);
