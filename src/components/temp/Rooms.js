@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import database from "../database/database";
-import EditRoom from "./EditRoom";
-import DeleteRoom from "./DeleteRoom";
-import AddRoom from "./AddRoom";
+import database from "../../database/database";
+import EditRoom from "../room/EditRoom";
+import DeleteRoom from "../room/DeleteRoom";
+import AddRoom from "../room/AddRoom";
 const Rooms = ({ data }) => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,55 +81,52 @@ const Rooms = ({ data }) => {
           </div>
         </div>
       ) : null}
-      <div className="row">
+      <div className="row card">
         <div className="col-12 text-center">
           {loading ? (
             <div className="spinner-border text-info" role="status">
               <span className="sr-only">Loading...</span>
             </div>
           ) : (
-            <div className="accordion" id="roomLists">
+            <div className="container" id="roomLists">
               {rooms.map((value, index) => {
                 return (
-                  <div className="card pt-1" key={index}>
-                    <div className="text-primary">
-                      <div className="d-flex justify-content-between align-items-center pr-1">
-                        <div
-                          className="btn btn-link collapsed"
-                          type="button"
-                          data-toggle="collapse"
-                          data-target={`#list${value.id}`}
-                          aria-expanded="false"
-                          aria-controls="collapseTwo"
-                        >
-                          <div>{value.name} </div>
-                        </div>
-                        <div className="d-flex justify-content-start">
-                          <div>
-                            <EditRoom
-                              editRoomById={editRoomById}
-                              getRoomById={() => getRoomById(value.id)}
-                              id={value.id}
-                            />
-                          </div>
-                          <div>
-                            <DeleteRoom
-                              deleteRoomById={() => deleteRoom(value.id)}
-                              roomName={value.name}
-                              id={value.id}
-                            />
-                          </div>
+                  <div>
+                    <div className="row" key={index}>
+                      <a
+                        className="text-primary text-left"
+                        data-toggle="collapse"
+                        href={`#room${value.id}`}
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="collapseExample"
+                      >
+                        {value.name}
+                      </a>
+                    </div>
+
+                    <div className="row">
+                      <div
+                        className="collapse col-8 mx-auto"
+                        id={`room${value.id}`}
+                      >
+                        <div className="col-sm-12 alert-success">
+                          {value.details}
                         </div>
                       </div>
-                    </div>
-                    <div
-                      id={`list${value.id}`}
-                      className="collapse"
-                      aria-labelledby="headingTwo"
-                      data-parent="#roomLists"
-                    >
-                      <div className="alert-info p-2 pl-3 text-left">
-                        {value.details}
+                      <div className="col-sm-6">
+                        <EditRoom
+                          editRoomById={editRoomById}
+                          getRoomById={() => getRoomById(value.id)}
+                          id={value.id}
+                        />
+                      </div>
+                      <div className="col-sm-6">
+                        <DeleteRoom
+                          deleteRoomById={() => deleteRoom(value.id)}
+                          roomName={value.name}
+                          id={value.id}
+                        />
                       </div>
                     </div>
                   </div>

@@ -15,7 +15,7 @@ const EditRoom = ({ editRoomById, getRoomById, id }) => {
     }
   };
   return (
-    <div className="container">
+    <div className="d-flex justify-content-start align-items-center">
       <div
         className="btn btn-sm btn-info"
         data-toggle="modal"

@@ -19,15 +19,15 @@ const Home = ({ data }) => {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-sm-10 mx-auto text-center">
+        <div className="col-sm-12 mx-auto text-center">
           <div className="display-4">Home Component</div>
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-10 mx-auto text-center">
+        <div className="col-sm-12 mx-auto text-center">
           <div className="text-success p-3">You Login Already!!</div>
           <div className="row">
-            <div className="col-sm-4">
+            <div className="col-sm-4 p-3">
               <Rooms />
             </div>
             <div className="col-sm-8">
