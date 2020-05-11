@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Rooms from "./Rooms";
+import ChatBoard from "./ChatBoard";
 
 const Home = ({ data }) => {
   if (!data.loginStatus) {
@@ -31,7 +32,7 @@ const Home = ({ data }) => {
               <Rooms />
             </div>
             <div className="col-sm-8">
-              <div>Chat.....</div>
+              <ChatBoard />
             </div>
           </div>
         </div>
