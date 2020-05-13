@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyDUhw2A_KacR6W1yvuZF_myjjTG7e72BQc",
   authDomain: "chat-appz.firebaseapp.com",
@@ -15,4 +16,5 @@ const firebaseApp = firebase.initializeApp(firebaseConfig);
 const database = firebaseApp.firestore();
 export const auth = firebase.auth();
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
+export const storage = firebase.storage().ref();
 export default database;

@@ -4,7 +4,8 @@ import database from "../database/database";
 import EditRoom from "./EditRoom";
 import DeleteRoom from "./DeleteRoom";
 import AddRoom from "./AddRoom";
-const Rooms = ({ data }) => {
+import * as action from "../actions/userAction";
+const Rooms = ({ data, onSetCurrentRoom }) => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -101,6 +102,7 @@ const Rooms = ({ data }) => {
                           data-target={`#list${value.id}`}
                           aria-expanded="false"
                           aria-controls="collapseTwo"
+                          onClick={() => onSetCurrentRoom(value.id)}
                         >
                           <div>{value.name} </div>
                         </div>
@@ -147,4 +149,11 @@ const mapStateToProps = (state) => {
     data: state.data,
   };
 };
-export default connect(mapStateToProps)(Rooms);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSetCurrentRoom: (id) => {
+      dispatch(action.onSetCurrentRoom(id));
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Rooms);

@@ -202,7 +202,7 @@ const UserLogin = ({
   }
   return (
     <div>
-      <Redirect to="/profile" />
+      <Redirect to="/" />
     </div>
   );
 };

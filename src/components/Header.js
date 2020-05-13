@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { actionType } from "../utils/share";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 const Header = ({ data, onLogout }) => {
   const status = data.loginStatus;
-  let pic = null;
-  if (status) {
-    pic = data.user.photoURL
-      ? data.user.photoURL
-      : require("../assets/logo.png");
-  }
+  const [pic, setPic] = useState(require("../assets/logo.png"));
+  useEffect(() => {
+    setPic(data.user.photoURL);
+  }, [data.user.photoURL]);
+
   return (
     <div className="row mt-4">
       <div className="col-sm-10 mx-auto">
@@ -79,7 +78,8 @@ const Header = ({ data, onLogout }) => {
                     src={pic}
                     alt="user"
                     width="40"
-                    className="img-fluid ml-1 rounded-circle"
+                    height="40"
+                    className="img mr-1 rounded-circle"
                   />
                 </div>
               ) : null}

@@ -1,7 +1,6 @@
 import React from "react";
+
 const DeleteRoom = ({ deleteRoomById, roomName, id }) => {
-  console.log(id);
-  console.log(roomName);
   return (
     <div className="container">
       <div
@@ -67,4 +66,5 @@ const DeleteRoom = ({ deleteRoomById, roomName, id }) => {
     </div>
   );
 };
+
 export default DeleteRoom;

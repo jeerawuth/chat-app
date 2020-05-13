@@ -3,8 +3,7 @@ const initialState = {
   data: {
     loginStatus: false,
     user: {},
-    message: {},
-    loading: false,
+    currentRoom: { id: null, name: null },
   },
   loading: false,
   message: { code: "", message: "", type: "" },
@@ -16,6 +15,7 @@ const reducer = (state = initialState, action) => {
         data: {
           loginStatus: true,
           user: action.payload,
+          currentRoom: { id: null, name: null },
         },
         loading: true,
         message: state.message,
@@ -26,6 +26,7 @@ const reducer = (state = initialState, action) => {
         data: {
           loginStatus: false,
           user: {},
+          currentRoom: { id: null, name: null },
         },
         loading: false,
         message: state.message,
@@ -36,6 +37,7 @@ const reducer = (state = initialState, action) => {
         data: {
           loginStatus: true,
           user: action.payload,
+          currentRoom: { id: null, name: null },
         },
         loading: true,
         message: state.message,
@@ -46,6 +48,7 @@ const reducer = (state = initialState, action) => {
         data: {
           loginStatus: false,
           user: action.payload,
+          currentRoom: { id: null, name: null },
         },
         loading: true,
         message: state.message,
@@ -56,6 +59,7 @@ const reducer = (state = initialState, action) => {
         data: {
           loginStatus: false,
           user: {},
+          currentRoom: { id: null, name: null },
         },
         loading: false,
         message: {
@@ -68,8 +72,9 @@ const reducer = (state = initialState, action) => {
     case actionType.SUCCESS:
       const successState = {
         data: {
-          loginStatus: state.loginStatus,
-          user: state.user,
+          loginStatus: state.data.loginStatus,
+          user: state.data.user,
+          currentRoom: { id: null, name: null },
         },
         loading: false,
         message: {
@@ -93,6 +98,36 @@ const reducer = (state = initialState, action) => {
         message: { code: "", message: "", type: "" },
       };
       return clearObj;
+
+    case actionType.CURRENT_ROOM:
+      const chooseRoomObj = {
+        data: {
+          loginStatus: state.data.loginStatus,
+          user: state.data.user,
+          currentRoom: {
+            id: action.payload.id,
+            name: action.payload.name,
+          },
+        },
+        loading: state.loading,
+        message: state.message,
+      };
+      return chooseRoomObj;
+    case actionType.UPDATE_IMAGE:
+      const newUser = { ...state.data.user };
+      console.log(action.payload.path);
+      newUser.photoURL = action.payload.path;
+      console.log(newUser.photoURL);
+      const newUserObj = {
+        data: {
+          loginStatus: state.data.loginStatus,
+          user: newUser,
+          currentRoom: state.data.currentRoom,
+        },
+        loading: state.loading,
+        message: state.message,
+      };
+      return newUserObj;
     default:
       return state;
   }

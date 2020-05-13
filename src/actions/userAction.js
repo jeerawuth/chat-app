@@ -1,4 +1,4 @@
-import database, { auth, googleProvider } from "../database/database";
+import database, { auth, googleProvider, storage } from "../database/database";
 import { actionType } from "../utils/share";
 import md5 from "md5";
 export const onGoogleLogin = () => {
@@ -12,10 +12,24 @@ export const onGoogleLogin = () => {
         usersRef.get().then((docSnapshot) => {
           if (docSnapshot.exists) {
             console.log("user exiting");
-            dispatch({
-              type: actionType.GOOGLE_LOGIN,
-              payload: user,
-            });
+            storage
+              .child("user-profiles")
+              .child(user.uid)
+              .child("photoURL")
+              .getDownloadURL()
+              .then((url) => {
+                user.photoURL = url;
+                dispatch({
+                  type: actionType.GOOGLE_LOGIN,
+                  payload: user,
+                });
+              })
+              .catch((err) => {
+                dispatch({
+                  type: actionType.GOOGLE_LOGIN,
+                  payload: user,
+                });
+              });
           } else {
             console.log("create new user");
             usersRef
@@ -71,10 +85,24 @@ export const onEmailLogin = (email, password) => {
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
         const user = result.user;
-        dispatch({
-          type: actionType.EMAIL_LOGIN,
-          payload: user,
-        });
+        storage
+          .child("user-profiles")
+          .child(user.uid)
+          .child("photoURL")
+          .getDownloadURL()
+          .then((url) => {
+            user.photoURL = url;
+            dispatch({
+              type: actionType.EMAIL_LOGIN,
+              payload: user,
+            });
+          })
+          .catch((err) => {
+            dispatch({
+              type: actionType.EMAIL_LOGIN,
+              payload: user,
+            });
+          });
       })
       .catch((err) => {
         const errObj = {
@@ -141,6 +169,38 @@ export const onEmailSignUp = (email, password) => {
       });
   };
 };
+
+export const onSetCurrentRoom = (id) => {
+  return (dispatch) => {
+    const roomRef = database.collection("rooms").doc(id);
+    roomRef.onSnapshot((doc) => {
+      if (doc.data()) {
+        dispatch({
+          type: actionType.CURRENT_ROOM,
+          payload: { id: doc.id, name: doc.data().name },
+        });
+      }
+    });
+  };
+};
+
+export const onUpdatePhotURL = (path) => {
+  return (dispatch) => {
+    const user = auth.currentUser;
+    user
+      .updateProfile({
+        displayName: user.displayName,
+        photoURL: path,
+      })
+      .then(() => {
+        dispatch({ type: actionType.UPDATE_IMAGE, payload: { path: path } });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+
 export const onSetLoading = () => {
   return { type: actionType.LOADING };
 };
