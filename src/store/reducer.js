@@ -115,9 +115,7 @@ const reducer = (state = initialState, action) => {
       return chooseRoomObj;
     case actionType.UPDATE_IMAGE:
       const newUser = { ...state.data.user };
-      console.log(action.payload.path);
       newUser.photoURL = action.payload.path;
-      console.log(newUser.photoURL);
       const newUserObj = {
         data: {
           loginStatus: state.data.loginStatus,

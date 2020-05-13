@@ -74,8 +74,6 @@ const ChatBoard = ({ data }) => {
         <div className="row mx-auto p-4">
           <div className="col-10 scroll mr-4 border rounded py-4">
             {chatLists.map((item, index) => {
-              console.log(item.userId);
-              console.log(data.user.uid);
               return (
                 <div key={index} className="container">
                   {item.userId === data.user.uid ? (

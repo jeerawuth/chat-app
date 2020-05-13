@@ -5,7 +5,6 @@ const AddChat = ({ roomId, user }) => {
   const addMessageChat = (e) => {
     e.preventDefault();
     const ref = database.collection(`rooms/${roomId}/chats`);
-    console.log(user.uid);
     const chatObj = {
       roomId: roomId,
       message: addChat,
