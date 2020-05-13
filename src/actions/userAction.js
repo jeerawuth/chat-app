@@ -183,6 +183,24 @@ export const onSetCurrentRoom = (id) => {
     });
   };
 };
+export const onSetDefaultRoom = () => {
+  return (dispatch) => {
+    const roomRef = database.collection("rooms").limit(1);
+    roomRef.get().then((doc) => {
+      if (doc.docs.length > 0) {
+        const lastDoc = doc.docs[0];
+        if (lastDoc.id && lastDoc.data().name) {
+          const roomId = lastDoc.id;
+          const roomName = lastDoc.data().name;
+          dispatch({
+            type: actionType.CURRENT_ROOM,
+            payload: { id: roomId, name: roomName },
+          });
+        }
+      }
+    });
+  };
+};
 
 export const onUpdatePhotURL = (path) => {
   return (dispatch) => {

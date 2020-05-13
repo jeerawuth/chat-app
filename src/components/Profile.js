@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import database, { storage } from "../database/database";
 import * as action from "../actions/userAction";
+import Loading from "./Loading";
 const Profile = ({ data, onUpdatePhotURL }) => {
   const userRef = database.collection("users").doc(`${data.user.uid}`);
   const [file, setFile] = useState(null);
@@ -10,6 +11,7 @@ const Profile = ({ data, onUpdatePhotURL }) => {
   const [photoURL, setPhotoURL] = useState(null);
   const [progress, setProgress] = useState(5);
   const [progressStatus, setProgressStatus] = useState(false);
+  const [loading, setLoading] = useState(false);
   const imageAllow = ["image/jpeg", "image/png"];
   useEffect(() => {
     setPhotoURL(data.user.photoURL);
@@ -24,6 +26,7 @@ const Profile = ({ data, onUpdatePhotURL }) => {
   const changeProfilePhotoHandler = () => {
     setFileErrorMessage("");
     if (checkImageContentType(file)) {
+      setLoading(true);
       setProgressStatus(true);
       const uploadTask = storage
         .child("user-profiles")
@@ -43,6 +46,7 @@ const Profile = ({ data, onUpdatePhotURL }) => {
           uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
             userRef.update({ photoURL: downloadURL }).then(() => {
               onUpdatePhotURL(downloadURL); //from dispatch to prop
+              setLoading(false);
             });
           });
         }
@@ -62,6 +66,7 @@ const Profile = ({ data, onUpdatePhotURL }) => {
     <div className="container-fluid">
       <div className="row">
         <div className="col-sm-10 mx-auto text-center">
+          {loading ? <Loading /> : null}
           <div className="display-4 mt-3">สวัสดี: {data.user.displayName}</div>
           {photoURL ? (
             <img

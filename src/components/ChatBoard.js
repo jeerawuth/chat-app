@@ -5,19 +5,23 @@ import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as action from "../actions/userAction";
 import AddChat from "./AddChat";
+import Loading from "./Loading";
 
-const ChatBoard = ({ data }) => {
+const ChatBoard = ({ data, onSetDefaultRoom }) => {
   const [chatLists, setChatLists] = useState([]);
   const [chatLoading, setChatLoading] = useState(false);
   const currentDateTime = useRef(Date.now().valueOf()).current;
   useEffect(() => {
+    onSetDefaultRoom();
+  }, [onSetDefaultRoom]);
+  useEffect(() => {
+    setChatLoading(true);
     const ref = database
       .collection(`rooms/${data.currentRoom.id}/chats`)
       .orderBy("created")
-      .where("created", ">", currentDateTime);
+      .where("created", ">", currentDateTime - 100000);
     ref.onSnapshot(
       (snapshot) => {
-        setChatLoading(true);
         let tempDataArray = [];
         snapshot.forEach((doc) => {
           tempDataArray.push({
@@ -50,8 +54,14 @@ const ChatBoard = ({ data }) => {
   return (
     <div className="container">
       {chatLoading ? (
-        <div className="spinner-border text-info" role="status">
-          <span className="sr-only">Loading...</span>
+        <div className="row">
+          <Loading
+            style={{
+              position: "relative",
+              top: "80%",
+              left: "30%",
+            }}
+          />
         </div>
       ) : null}
       {data.currentRoom.id && data.currentRoom.name ? (
@@ -146,6 +156,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onSetCurrentRoom: (id) => {
       dispatch(action.onSetCurrentRoom(id));
+    },
+    onSetDefaultRoom: () => {
+      dispatch(action.onSetDefaultRoom());
     },
   };
 };
