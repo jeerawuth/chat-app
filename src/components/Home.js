@@ -20,7 +20,7 @@ const Home = ({ data }) => {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-sm-4 p-3">
+        <div className="col-sm-4 p-3 mt-4">
           <Rooms />
         </div>
         <div className="col-sm-8 mt-3">

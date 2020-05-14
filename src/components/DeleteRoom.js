@@ -1,6 +1,8 @@
 import React from "react";
+import { connect } from "react-redux";
+import * as action from "../actions/userAction";
 
-const DeleteRoom = ({ deleteRoomById, roomName, id }) => {
+const DeleteRoom = ({ deleteRoomById, roomName, id, onDeleteRoom, data }) => {
   return (
     <div className="container">
       <div
@@ -54,6 +56,7 @@ const DeleteRoom = ({ deleteRoomById, roomName, id }) => {
                 onClick={() => {
                   deleteRoomById().then(() => {
                     console.log("delete ok");
+                    onDeleteRoom(id, data.currentRoom.id);
                   });
                 }}
               >
@@ -67,4 +70,16 @@ const DeleteRoom = ({ deleteRoomById, roomName, id }) => {
   );
 };
 
-export default DeleteRoom;
+const mapStateToProps = (state) => {
+  return {
+    data: state.data,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onDeleteRoom: (id, currentId) => {
+      dispatch(action.onDeleteRoom(id, currentId));
+    },
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(DeleteRoom);

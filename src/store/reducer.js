@@ -113,6 +113,20 @@ const reducer = (state = initialState, action) => {
         message: state.message,
       };
       return chooseRoomObj;
+    case actionType.DELETE_ROOM:
+      const deleteObj = {
+        data: {
+          loginStatus: state.data.loginStatus,
+          user: state.data.user,
+          currentRoom: {
+            id: null,
+            name: null,
+          },
+        },
+        loading: state.loading,
+        message: state.message,
+      };
+      return deleteObj;
     case actionType.UPDATE_IMAGE:
       const newUser = { ...state.data.user };
       newUser.photoURL = action.payload.path;

@@ -59,7 +59,7 @@ const ChatBoard = ({ data, onSetDefaultRoom }) => {
             style={{
               position: "relative",
               top: "80%",
-              left: "30%",
+              left: "20%",
             }}
           />
         </div>
@@ -74,22 +74,44 @@ const ChatBoard = ({ data, onSetDefaultRoom }) => {
               <hr />
             </div>
           </div>
-          <AddChat roomId={data.currentRoom.id} user={data.user} />
-          <hr />
         </div>
       ) : (
-        <div className="display-4">กรุณาเลือกห้อง</div>
+        <div className="container">
+          {chatLoading && !data.currentRoom.id ? (
+            <div className="row">
+              <div className="col-sm-6">
+                <div className="text-success p-3 text-center">
+                  กำลังโหลดข้อมูลห้อง...
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="row">
+              <div className="col-sm-6 mt-4">
+                <div className="alert-success p-3 text-center">
+                  เลือกห้องที่ต้องการสนทนา
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       )}
       {chatLists.length > 0 ? (
-        <div className="row mx-auto p-4">
-          <div className="col-10 scroll mr-4 border rounded py-4">
+        <div className="row">
+          <div
+            className="col-11 scroll mx-4 my-3 border rounded py-4"
+            style={{
+              height: "300px",
+              overflowY: "auto",
+            }}
+          >
             {chatLists.map((item, index) => {
               return (
                 <div key={index} className="container">
                   {item.userId === data.user.uid ? (
                     <div className="d-flex justify-content-end">
                       <div className="d-flex align-items-center">
-                        <div className="d-flex flex-column">
+                        <div className="d-flex flex-column align-items-end">
                           <div className="text-info d-flex justify-content-end">
                             <div>@{item.displayName}</div>
                           </div>
@@ -103,11 +125,12 @@ const ChatBoard = ({ data, onSetDefaultRoom }) => {
                           </div>
                         </div>
                         <img
-                          src={item.photoURL}
+                          src={item.photoURL ? item.photoURL : item.gravatar}
                           alt="user"
                           width="40"
                           height="40"
                           className="img mr-1 rounded-circle"
+                          style={{ flex: 1 }}
                         />
                       </div>
                     </div>
@@ -115,13 +138,14 @@ const ChatBoard = ({ data, onSetDefaultRoom }) => {
                     <div className="d-flex justify-content-start">
                       <div className="d-flex align-items-center">
                         <img
-                          src={item.photoURL}
+                          src={item.photoURL ? item.photoURL : item.gravatar}
                           alt="user"
                           width="40"
                           height="40"
                           className="img mr-1 rounded-circle"
+                          style={{ flex: 1 }}
                         />
-                        <div className="d-flex flex-column">
+                        <div className="d-flex flex-column align-items-start">
                           <div className="text-info d-flex justify-content-start">
                             <div>@{item.displayName}</div>
                           </div>
@@ -142,6 +166,23 @@ const ChatBoard = ({ data, onSetDefaultRoom }) => {
             })}
           </div>
         </div>
+      ) : (
+        <div className="row">
+          <div
+            className="col-10 scroll m-4 border rounded py-4 overflow-auto"
+            style={{
+              height: "300px",
+              overflowY: "auto",
+            }}
+          >
+            <div className="alert-info p-3 text-center">
+              ยังไม่มีรายการแชตในตอนนี้
+            </div>
+          </div>
+        </div>
+      )}
+      {data.currentRoom.id && data.currentRoom.name ? (
+        <AddChat roomId={data.currentRoom.id} user={data.user} />
       ) : null}
     </div>
   );

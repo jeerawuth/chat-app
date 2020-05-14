@@ -34,8 +34,8 @@ export const onGoogleLogin = () => {
             console.log("create new user");
             usersRef
               .set({
-                name: user.displayName,
-                avatar: user.photoURL,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
               })
               .then(() => {
                 dispatch({
@@ -170,6 +170,13 @@ export const onEmailSignUp = (email, password) => {
   };
 };
 
+export const onDeleteRoom = (id, currentId) => {
+  return (dispatch) => {
+    if (id === currentId) {
+      dispatch({ type: actionType.DELETE_ROOM });
+    }
+  };
+};
 export const onSetCurrentRoom = (id) => {
   return (dispatch) => {
     const roomRef = database.collection("rooms").doc(id);
