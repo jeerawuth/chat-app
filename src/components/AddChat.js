@@ -48,7 +48,7 @@ const AddChat = ({ roomId, user }) => {
     <div className="container">
       {!roomIdIsValid ? (
         <div className="row">
-          <div className="alert-danger col-sm-8 mx-autor p-4">
+          <div className="alert-danger col-sm-12 text-center mx-auto p-2 my-2">
             ห้องนี้ถูกลบไปแล้ว กรุณาเลือกห้องอื่น
           </div>
         </div>

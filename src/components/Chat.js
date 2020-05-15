@@ -4,6 +4,7 @@ import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Rooms from "./Rooms";
 import ChatBoard from "./ChatBoard";
+import { Redirect } from "react-router-dom";
 
 const Home = ({ data }) => {
   if (!data.loginStatus) {
@@ -11,7 +12,7 @@ const Home = ({ data }) => {
       <div className="container">
         <div className="row">
           <div className="col-sm-10 mx-auto text-center">
-            <div className="display-4">Home Component</div>
+            <Redirect to="/login" />
           </div>
         </div>
       </div>

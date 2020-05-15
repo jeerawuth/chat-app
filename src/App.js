@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from "redux";
 import reducer from "./store/reducer";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
-import Home from "./components/Home";
+import Chat from "./components/Chat";
 import Header from "./components/Header";
 import Profile from "./components/Profile";
 import UserLogin from "./components/UserLogin";
@@ -18,7 +18,7 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Header />
-        <Route path="/" component={Home} exact={true} />
+        <Route path="/" component={Chat} exact={true} />
         <Route path="/login" component={UserLogin} />
         <Route path="/profile" component={Profile} />
         <Route path="/signup" component={UserSignup} />

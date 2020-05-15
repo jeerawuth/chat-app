@@ -29,7 +29,7 @@ const Header = ({ data, onLogout }) => {
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
                 <Link className="nav-link" to="/">
-                  Home
+                  Chat
                 </Link>
               </li>
               {status ? (
